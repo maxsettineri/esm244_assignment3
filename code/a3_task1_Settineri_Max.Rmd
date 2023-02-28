@@ -1,0 +1,45 @@
+---
+title: "Task 1"
+author: "Max Settineri"
+date: "2023-02-28"
+output: 
+  html_document:
+    code_folding: hide
+    toc: yes
+---
+
+## Introduction
+
+
+
+**Data** compiled and provided by @zander_venter on Kaggle, described as: “This data is all acquired through Google Earth Engine (https://earthengine.google.com/) where publicly available remote sensing datasets have been uploaded...Most of the data is derived by calculating the mean for each country at a reduction scale of about 10km.”
+
+```{r setup, include=FALSE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
+library(tidyverse)
+library(janitor)
+library(here)
+library(ggfortify) 
+library(patchwork)
+library(gghighlight)
+library(lubridate)
+library(plotly) 
+```
+
+## PCA
+
+```{r}
+## reading in the data
+environmental <- read_csv(here('data/world_env_vars.csv')) %>% 
+  drop_na() %>% ## dropping rows with NA values
+  clean_names()
+
+environmental_clean <- column_to_rownames(environmental, var = 'country') %>% ## using country as row names
+  scale() %>% ## scaling data to one standard deviation
+  prcomp() ## running the PCA
+
+```
+
+
+## Summary

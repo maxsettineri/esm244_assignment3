@@ -35,10 +35,25 @@ environmental <- read_csv(here('data/world_env_vars.csv')) %>%
   drop_na() %>% ## dropping rows with NA values
   clean_names()
 
-environmental_clean <- column_to_rownames(environmental, var = 'country') %>% ## using country as row names
+environmental_clean <- column_to_rownames(environmental, var = 'country') ## using country as row names
+
+environmental_pca <- environmental_clean %>% 
   scale() %>% ## scaling data to one standard deviation
   prcomp() ## running the PCA
 
+```
+
+```{r}
+autoplot(environmental_pca,
+     	data = environmental_clean,
+     	loadings = TRUE,
+     	colour = 'cloudiness',
+     	loadings.label = TRUE,
+     	loadings.colour = "black",
+     	loadings.label.colour = "black",
+     	loadings.label.vjust = -0.5) +
+  scale_color_gradient(low = 'goldenrod', high = 'steelblue4') +
+  theme_minimal()
 ```
 
 

@@ -53,6 +53,31 @@ streams_scaled <- streams %>%
 ## using site code as row names
 rownames(streams_scaled) <- streams$site_code 
 
+## creating matrix of euclidean distances
+streams_dist <- dist(streams_scaled, method = 'euclidean')
+
+## hierarchical clustering (complete linkage)
+streams_hc_complete <- hclust(streams_dist, method = 'complete')
+
+## plotting dendrogram to observe clusters
+# plot(streams_hc_complete, cex = .6, hang = -1)
+
+## cut tree into three clusters
+# streams_cut_hc <- cutree(streams_hc_complete, 3)
+# table(streams_cut_hc, streams_hc_complete)
+
+## maing a finalized dendrogram with ggdendro
+ggdendrogram(streams_hc_complete) +
+  theme_minimal() +
+  labs(x = 'Stream Site', y = 'Euclidian Distance')
+
 ```
 
+**Figure 1:** Depicts a dendrogram that shows relationships in water chemistry by stream site. The cluster dendrogram was produced using complete linkages. 
 
+## Summary
+
+- Figure 1 displays two main distinct clusters, with stream site `DV01` being isolated into its own cluster third
+- `BC02`, `AT07`, `AB00`, `MC00`, `SP02`, `GV01` and `MC06` form a distinct second cluster
+- Stream sites `TO02`, `RG01`, `ON02`, `HO00` and `RS02` form a third cluster
+- 

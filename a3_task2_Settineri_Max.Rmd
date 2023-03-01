@@ -25,3 +25,34 @@ library(dendextend)
 library(ggdendro)
 ```
 
+## Data wrangling
+
+```{r}
+## reading in the data
+streams <- read_csv(here('data/sbc_lter_registered_stream_chemistry.csv')) %>% 
+  clean_names() %>% 
+  na_if(-999) %>% ## changing -999 values to NA
+  select(-tss_mgper_liter, -tpp_u_m, -tpn_u_m, -tpc_u_m, -timestamp_local) %>%  ## removing columns with more than 50% NA values
+  group_by(site_code) %>% ## grouping by site
+  summarize('Ammonium' = mean(nh4_u_m, na.rm = TRUE), ## renaming columns and using na.rm to remove rows with NA values
+    'Nitrate' = mean(no3_u_m, na.rm = TRUE),
+    'Phosphorous' = mean(po4_u_m, na.rm = TRUE),
+    'Dissolved nitrogen' = mean(tdn_u_m, na.rm = TRUE),
+    'Dissolved phosphorous' = mean(tdp_u_m, na.rm = TRUE),
+    'Specific conductivity' = mean(spec_cond_u_spercm, na.rm = TRUE)) 
+```
+
+## Agglomerative hierarchical clustering
+
+```{r}
+## creating scaled version of the data for use in hierarchical clustering
+streams_scaled <- streams %>% 
+  select(-site_code) %>% ## removing site code since it's non numerical
+  scale() ## scaling the data
+
+## using site code as row names
+rownames(streams_scaled) <- streams$site_code 
+
+```
+
+

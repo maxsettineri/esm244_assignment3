@@ -1,5 +1,5 @@
 ---
-title: "Task 2"
+title: "Task 2 - Agglomerative hierarchical clustering"
 author: "Max Settineri"
 date: "2023-02-28"
 output: 
@@ -9,6 +9,8 @@ output:
 ---
 
 ## Introduction
+
+This analysis explores stream chemistry data from the Santa Barbara Coastal drainage area. The code performs hierarchical clustering using complete linkages and creates a dendrogram showing clustering for water chemistry variables by stream site. The water chemistry variables explored in this analysis include data on specific conductivity, ammonium, nitrate, phosphorus, dissolved nitrogen and dissolved phosphorus concentrations. 
 
 **Data Citation:** Citation: Santa Barbara Coastal LTER and J. Melack. 2019. SBC LTER: Land: Stream chemistry in the Santa Barbara Coastal drainage area, ongoing since 2000 ver 16. Environmental Data Initiative. https://doi.org/10.6073/pasta/67a558a24ceed9a0a5bf5e46ab841174.
 
@@ -59,13 +61,6 @@ streams_dist <- dist(streams_scaled, method = 'euclidean')
 ## hierarchical clustering (complete linkage)
 streams_hc_complete <- hclust(streams_dist, method = 'complete')
 
-## plotting dendrogram to observe clusters
-# plot(streams_hc_complete, cex = .6, hang = -1)
-
-## cut tree into three clusters
-# streams_cut_hc <- cutree(streams_hc_complete, 3)
-# table(streams_cut_hc, streams_hc_complete)
-
 ## maing a finalized dendrogram with ggdendro
 ggdendrogram(streams_hc_complete) +
   theme_minimal() +
@@ -73,11 +68,12 @@ ggdendrogram(streams_hc_complete) +
 
 ```
 
-**Figure 1:** Depicts a dendrogram that shows relationships in water chemistry by stream site. The cluster dendrogram was produced using complete linkages. 
+**Figure 1:** Depicts a dendrogram that shows relationships in water chemistry by stream site. The cluster dendrogram was produced using complete linkages. The dendrogram displays two main distinct clusters, with stream site `DV01` being isolated into its own third cluster.
 
 ## Summary
 
-- Figure 1 displays two main distinct clusters, with stream site `DV01` being isolated into its own cluster third
-- `BC02`, `AT07`, `AB00`, `MC00`, `SP02`, `GV01` and `MC06` form a distinct second cluster
-- Stream sites `TO02`, `RG01`, `ON02`, `HO00` and `RS02` form a third cluster
-- 
+- Two main clusters are observed, with stream site `DV01` separated into its own cluster; this indicates that there are three total clusters of streams with similar water chemistry
+  - `BC02`, `AT07`, `AB00`, `MC00`, `SP02`, `GV01` and `MC06` form the first main cluster
+  - Stream sites `TO02`, `RG01`, `ON02`, `HO00` and `RS02` form the second main cluster
+- The two most closely related stream sites are `HO00` and `RS02`
+- More research should be conducted to determine which water chemistry variables contribute to these observed different clusters

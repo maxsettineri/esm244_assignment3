@@ -1,5 +1,5 @@
 ---
-title: "Task 1"
+title: "Task 1 - Principal component analysis"
 author: "Max Settineri"
 date: "2023-02-28"
 output: 
@@ -10,7 +10,7 @@ output:
 
 ## Introduction
 
-
+This analysis examines miscellaneous environmental and climatic variables by country compiled by @zander_venter on Kaggle. A principle component analysis will be conducted on variables of interest to assess relationships between variables. A screeplot will also be used to examine variance explained by individual principle components. 
 
 **Data** compiled and provided by @zander_venter on Kaggle, described as: “This data is all acquired through Google Earth Engine (https://earthengine.google.com/) where publicly available remote sensing datasets have been uploaded...Most of the data is derived by calculating the mean for each country at a reduction scale of about 10km.”
 
@@ -32,29 +32,42 @@ library(plotly)
 ```{r}
 ## reading in the data
 environmental <- read_csv(here('data/world_env_vars.csv')) %>% 
-  drop_na() %>% ## dropping rows with NA values
-  clean_names()
+  drop_na() %>% 
+  clean_names() %>% 
+  select(accessibility_to_cities, elevation, cropland_cover, tree_canopy_cover, rain_mean_annual, rain_seasonailty, temp_annual_range, temp_mean_annual, wind, cloudiness) %>% 
+  rename('Accessibility to cities' = accessibility_to_cities,
+         'Elevation' = elevation,
+         'Cropland cover' = cropland_cover,
+         'Tree canopy cover' = tree_canopy_cover,
+         'Mean annual rainfall' = rain_mean_annual,
+         'Rain seasonality' = rain_seasonailty,
+         'Annual temperature range' = temp_annual_range,
+         'Mean annual temperature' = temp_mean_annual,
+         'Wind' = wind,
+         'Cloudiness' = cloudiness
+         )
 
-environmental_pca <- environmental_clean %>% 
+
+environmental_pca <- environmental %>% 
   scale() %>% ## scaling data to one standard deviation
   prcomp() ## running the PCA
 
 ```
 
 ```{r}
+## plotting the PCA
 autoplot(environmental_pca,
      	data = environmental,
      	loadings = TRUE,
-     	colour = 'cloudiness',
+     	colour = 'darkseagreen4',
      	loadings.label = TRUE,
-     	loadings.colour = "black",
-     	loadings.label.colour = "black",
+     	loadings.colour = 'darkcyan',
+     	loadings.label.colour = 'darkslategray',
      	loadings.label.vjust = -0.5) +
-  scale_color_gradient(low = 'goldenrod', high = 'steelblue4') +
-  theme_minimal()
+  theme_classic()
 ```
 
-**Figure 1:** ...
+**Figure 1** displays a biplot with results from our principle component analysis. Arrow length represents the proportion of variance that is explained by a given principle component. Each point represents one of the 188 countries incorporated in this analysis. 
 
 ## Screeplot
 
@@ -76,6 +89,12 @@ ggplot(pct_expl_df, aes(x = pc, y = v)) + ## mapping pc to the x axis and varian
   labs(x = 'Principal component', y = 'Variance explained')
 ```
 
-**Figure 2:** ...
+**Figure 2** shows a screeplot displaying variance explained by individual principle components. 
 
 ## Summary
+
+- Cropland cover and mean annual temperature show a high negative correlation, highlighting the importance of appropriate climate for agricultural production 
+- Mean annual rainfall and tree canopy cover are highly positively correlated, indicating that trees grow well in areas with higher precipitation
+- Mean annual temperature and elevation show a negative correlation, as higher elevations generally have lower temperatures
+- Cloudiness and mean annual temperature show almost no correlation
+- As demonstrated in figure 2, four principle components explain over 80% of the variance. The argument could be made the PC1-4 are sufficient to analyze variance between countires.
